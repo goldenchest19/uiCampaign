@@ -37,27 +37,27 @@ export default function Campaigns() {
 
     const columns = [
         {
-            title: 'ID',
+            title: 'Id',
             dataIndex: 'id',
             key: 'id',
         },
         {
-            title: 'Name',
+            title: 'Название',
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: 'Budget',
+            title: 'Бюджет',
             dataIndex: 'budget',
             key: 'budget',
         },
         {
-            title: 'Count Devices',
+            title: 'Количество устройств',
             dataIndex: 'count_devices',
             key: 'count_devices',
         },
         {
-            title: 'Status',
+            title: 'Статус',
             dataIndex: 'status',
             key: 'status',
             render: (status) => (
