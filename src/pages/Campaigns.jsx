@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Table, Button, Space, Popconfirm, Typography } from 'antd';
+import { Table, Button, Space, Popconfirm, Typography, Drawer } from 'antd';
+import CampaignForm from '../components/forms/CampaignForm';
 
 const initialData = [
     {
@@ -26,25 +27,13 @@ const initialData = [
 ];
 
 export default function Campaigns() {
-    const [data, setData] = useState(initialData);
+    const [data, setData] = useState(initialData)
+    const [drawer, setDrawer] = useState(false)
 
-    // Функция для удаления строки
     const handleDelete = (id) => {
-        const updatedData = data.filter((item) => item.id !== id);
-        setData(updatedData);
-    };
-
-    // Функция для добавления новой кампании
-    const handleAdd = () => {
-        const newData = {
-            id: data.length + 1,
-            name: `Campaign ${data.length + 1}`,
-            budget: 1000 * (data.length + 1),
-            count_devices: 10 + data.length,
-            status: 'Active',
-        };
-        setData([...data, newData]);
-    };
+        const updatedData = data.filter((item) => item.id !== id)
+        setData(updatedData)
+    }
 
     const columns = [
         {
@@ -99,7 +88,9 @@ export default function Campaigns() {
 
     return (
         <div>
-            <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
+            <Button type="primary"
+                onClick={() => setDrawer(true)}
+                style={{ marginBottom: 16 }}>
                 Добавить кампанию
             </Button>
             <Table
@@ -109,6 +100,15 @@ export default function Campaigns() {
                 pagination={{ pageSize: 5 }}
                 bordered
             />
+
+            <Drawer
+                width={600}
+                title="Add campaign"
+                onClose={() => setDrawer(false)}
+                open={drawer}
+                destroyOnClose>
+                <CampaignForm closeModal={() => setDrawer(false)} />
+            </Drawer>
         </div>
     );
 }

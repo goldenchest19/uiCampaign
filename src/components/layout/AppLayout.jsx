@@ -3,7 +3,7 @@ import { Layout, theme } from 'antd';
 import AppHeader from './AppHeader';
 import AppSider from './AppSider';
 import AppContent from './AppContent';
- 
+
 export default function AppLayout() {
     const [collapsed, setCollapsed] = useState(false);
     const {
