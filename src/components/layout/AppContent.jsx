@@ -1,37 +1,19 @@
-import { Layout, Typography } from 'antd';
-import { useCrypto } from '../../context/crypto-context';
-import PortfolioChart from '../PortfolioChart';
-import AssetsTable from '../AssetsTable';
+import { Layout } from 'antd';
+import { Outlet } from 'react-router-dom';
 
-const contentStyle = {
-    textAlign: 'center',
-    minHeight: 'calc(100vh - 60px)',
-    color: '#fff',
-    backgroundColor: '#001529',
-    padding: '1rem'
-};
+const { Content } = Layout;
 
-export default function AppContent() {
-    const { assets, crypto } = useCrypto()
-
-    const cryptoPriceMap = crypto.reduce((acc, c) => {
-        acc[c.id] = c.price
-        return acc
-    }, {})
-
-    return (<Layout.Content style={contentStyle}>
-        <Typography.Title level={3}
-            style={{ textAlign: 'left', color: '#fff' }}>
-            Portfolio: {' '}
-            {assets
-                .map(asset => {
-                    // const coin = crypto.find(c => c.id === asset.id)
-                    return asset.amount * cryptoPriceMap[asset.id]
-                })
-                .reduce((acc, v) => acc += v, 0).toFixed(2)}
-            $
-        </Typography.Title>
-        <PortfolioChart />
-        <AssetsTable />
-    </Layout.Content>)
+export default function AppContent({ colorBgContainer, borderRadiusLG }) {
+    return (
+        <Content
+            style={{
+                margin: '24px 16px',
+                padding: 24,
+                minHeight: 280,
+                background: colorBgContainer,
+                borderRadius: borderRadiusLG,
+            }}>
+            <Outlet />
+        </Content>
+    )
 }

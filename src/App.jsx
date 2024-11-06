@@ -1,11 +1,19 @@
 import AppLayout from './components/layout/AppLayout';
-import { CryptoContextProvider } from './context/crypto-context';
+import { Routes, Route } from 'react-router-dom';
+import Campaigns from './pages/Campaigns';
+import Banners from './pages/Banners';
+import DeviceGroups from './pages/DeviceGroups';
 
 
 
 export default function App() {
   return (
-    <CryptoContextProvider>
-      <AppLayout />
-    </CryptoContextProvider>)
+    <Routes >
+      <Route path="/" element={<AppLayout />}>
+        {/* <Route index element={<Homepage />} /> */}
+        <Route path="campaigns" element={<Campaigns />} />
+        <Route path="devices" element={<Banners />} />
+        <Route path="banners" element={<DeviceGroups />} />
+      </Route>
+    </Routes>)
 }

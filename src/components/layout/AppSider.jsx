@@ -1,52 +1,37 @@
-import { Layout, Card, Statistic, List, Typography, Spin, Tag } from 'antd';
-import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
-import { capitalize } from '../../util';
-import { useContext } from 'react';
-import CryptoContext from '../../context/crypto-context';
+import React from 'react';
+import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { Menu, Layout } from 'antd';
+import { Link } from 'react-router-dom'
 
 
+const { Sider } = Layout;
 
-const siderStyle = {
-    padding: '1rem'
-};
-
-export default function AppSider() {
-    const { assets } = useContext(CryptoContext)
-
-
-
+export default function AppSider({ collapsed }) {
     return (
-        <Layout.Sider width="25%" style={siderStyle}>
-            {assets.map(asset => (
-                <Card key={asset.id} style={{ marginBottom: '1rem' }}>
-                    <Statistic
-                        title={capitalize(asset.id)}
-                        value={asset.totalAmount}
-                        precision={2}
-                        valueStyle={{ color: asset.grow ? '#3f8600' : '#cf1322' }}
-                        prefix={asset.grow ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                        suffix="$" />
-                    <List
-                        size="small"
-                        dataSource={[
-                            { title: 'Total Profit', value: asset.totalProffit, withTag: true },
-                            { title: 'Asset Amount', value: asset.amount, isPlain: true },
-                        ]}
-                        renderItem={(item) => (
-                            <List.Item>
-                                <span>{item.title}</span>
-                                <span>
-                                    {item.withTag && <Tag color={asset.grow ? 'green' : 'red'}>{asset.growPercent}%</Tag>}
-                                    {item.isPlain && item.value}
-                                    {!item.isPlain && (<Typography.Text type={asset.grow ? 'success' : 'danger'}>
-                                        {item.value.toFixed(2)}$
-                                    </Typography.Text>)}
-                                </span>
-                            </List.Item>
-                        )}
-                    />
-                </Card>
-            ))}
-        </Layout.Sider>
-    )
+        <Sider width="20%" trigger={null} collapsible collapsed={collapsed}>
+            <div className="demo-logo-vertical" />
+            <Menu
+                theme="dark"
+                mode="inline"
+                defaultSelectedKeys={['1']}
+                items={[
+                    {
+                        key: '1',
+                        icon: <UserOutlined />,
+                        label: <Link to="/campaigns">Рекламные кампании</Link>,
+                    },
+                    {
+                        key: '2',
+                        icon: <VideoCameraOutlined />,
+                        label: <Link to='/devices'>Группы устройств</Link>,
+                    },
+                    {
+                        key: '3',
+                        icon: <UploadOutlined />,
+                        label: <Link to='/banners'>Баннеры</Link>,
+                    },
+                ]}
+            />
+        </Sider>
+    );
 }
