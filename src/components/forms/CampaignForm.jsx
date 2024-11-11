@@ -9,22 +9,56 @@ export default function CampaignForm({ closeModal }) {
 
     useEffect(() => {
         // Запрос на получение списка устройств
-        fetch('http://localhost:8080/api/devices') 
+        fetch('http://localhost:9000/api/device-groups')  // Исправил URL для получения устройств
             .then((response) => response.json())
-            .then((data) => setDevices(data))
+            .then((data) => {
+                setDevices(data);  // Обновление состояния devices
+            })
             .catch((error) => message.error('Ошибка загрузки списка устройств'));
 
         // Запрос на получение списка баннеров
-        fetch('http://localhost:8080/api/banners')
+        fetch('http://localhost:9000/api/banners')  // Исправил URL для получения баннеров
             .then((response) => response.json())
-            .then((data) => setBanners(data))
+            .then((data) => {
+                setBanners(data);  // Обновление состояния banners
+            })
             .catch((error) => message.error('Ошибка загрузки списка баннеров'));
-    }, []);
+    }, []);  // Пустой массив зависимостей для выполнения только при монтировании компонента
 
     const handleSubmit = (values) => {
-        console.log('Received values:', values);
-        message.success('Кампания успешно создана!');
-        closeModal();
+        // Формируем объект с данными из формы
+        const campaignData = {
+            name: values.name,
+            budget: values.budget,
+            countDevices: values.devices.length,  // Количество выбранных устройств
+            status: 'Active',  // Устанавливаем статус как активный по умолчанию
+            description: values.description,
+            startDate: values.start_date.format('YYYY-MM-DD'),
+            endDate: values.end_date.format('YYYY-MM-DD'),
+            deviceId: values.devices,  // Список выбранных устройств
+            bannerId: values.banner,  // ID выбранного баннера
+        };
+
+        // Отправка POST запроса на создание кампании
+        fetch('http://localhost:9000/api/campaigns', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(campaignData),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    message.success('Кампания успешно создана!');
+                    closeModal();  // Закрытие модального окна
+                } else {
+                    message.error('Ошибка создания кампании');
+                }
+            })
+            .catch((error) => {
+                message.error('Ошибка при отправке данных');
+                console.error(error);
+            });
     };
 
     return (
@@ -64,9 +98,8 @@ export default function CampaignForm({ closeModal }) {
             <Form.Item
                 label="Устройства"
                 name="devices"
-                rules={[{ message: 'Выберите устройства' }]}
             >
-                <Select mode="multiple" placeholder="Выберите устройства">
+                <Select placeholder="Выберите устройства">
                     {devices.map((device) => (
                         <Option key={device.id} value={device.id}>
                             {device.name}
@@ -78,7 +111,6 @@ export default function CampaignForm({ closeModal }) {
             <Form.Item
                 label="Баннер"
                 name="banner"
-                rules={[{ message: 'Выберите баннер' }]}
             >
                 <Select placeholder="Выберите баннер">
                     {banners.map((banner) => (

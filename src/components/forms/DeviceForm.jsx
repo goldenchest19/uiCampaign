@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, message, Select } from 'antd';
 
-const { Option } = Select;
-
 export default function DeviceForm({ closeModal }) {
     const [deviceIds, setDeviceIds] = useState([]);
 
@@ -48,13 +46,11 @@ export default function DeviceForm({ closeModal }) {
                 rules={[{ required: true, message: 'Выберите устройства' }]}
             >
                 <Select
-                    mode="multiple"
-                    placeholder="Выберите устройства"
+                    mode="tags" // Используем режим tags для поддержки добавления тегов
+                    placeholder="Выберите или добавьте устройства"
                     onChange={handleDeviceChange}
-                >
-                    <Option value="1">Устройство 1</Option>
-                    <Option value="2">Устройство 2</Option>
-                    <Option value="3">Устройство 3</Option>
+                    value={deviceIds}
+>   
                 </Select>
             </Form.Item>
 

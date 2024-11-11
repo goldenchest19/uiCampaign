@@ -1,39 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, Button, Space, Popconfirm, Typography, Drawer } from 'antd';
 import CampaignForm from '../components/forms/CampaignForm';
 
-const initialData = [
-    {
-        id: 1,
-        name: 'Campaign 1',
-        budget: 1000,
-        count_devices: 10,
-        status: 'Active',
-    },
-    {
-        id: 2,
-        name: 'Campaign 2',
-        budget: 2000,
-        count_devices: 15,
-        status: 'Inactive',
-    },
-    {
-        id: 3,
-        name: 'Campaign 3',
-        budget: 3000,
-        count_devices: 20,
-        status: 'Paused',
-    },
-];
+
 
 export default function Campaigns() {
-    const [data, setData] = useState(initialData)
+    const [data, setData] = useState([])
     const [drawer, setDrawer] = useState(false)
 
     const handleDelete = (id) => {
         const updatedData = data.filter((item) => item.id !== id)
         setData(updatedData)
     }
+
+    // Загружаем данные из API при монтировании компонента
+    useEffect(() => {
+        // Отправляем GET-запрос на сервер
+        fetch('http://localhost:9000/api/campaigns')
+            .then((response) => response.json()) // Преобразуем ответ в JSON
+            .then((data) => setData(data)) // Устанавливаем полученные данные в состояние
+            .catch((error) => console.error('Ошибка при получении данных:', error)); // Логируем ошибку в случае неудачи
+    }, []); // useEffect выполнится один раз при монтировании компонента
 
     const columns = [
         {
@@ -53,8 +40,8 @@ export default function Campaigns() {
         },
         {
             title: 'Количество устройств',
-            dataIndex: 'count_devices',
-            key: 'count_devices',
+            dataIndex: 'countDevices',
+            key: 'countDevices',
         },
         {
             title: 'Статус',
