@@ -1,36 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, Button, Space, Popconfirm, Typography, Drawer } from 'antd';
 import DeviceForm from '../components/forms/DeviceForm';
 
-const initialData = [
-    {
-        id: 1,
-        name: 'БГ 1',
-        count_devices: 10,
-        status: 'Active',
-    },
-    {
-        id: 2,
-        name: 'БГ 2',
-        count_devices: 15,
-        status: 'Inactive',
-    },
-    {
-        id: 3,
-        name: 'БГ 3',
-        count_devices: 20,
-        status: 'Active ',
-    },
-];
 
 export default function DeviceGroups() {
-    const [data, setData] = useState(initialData)
+    const [data, setData] = useState([])
     const [drawer, setDrawer] = useState(false)
 
     const handleDelete = (id) => {
-        const updatedData = data.filter((item) => item.id !== id)
-        setData(updatedData)
-    }
+        // Отправляем DELETE запрос на сервер
+        fetch(`http://localhost:9000/api/device-groups/${id}`, {
+            method: 'DELETE',
+        })
+            .then((response) => {
+                if (response.ok) {
+                    // Успешно удалена, обновляем данные в таблице
+                    const updatedData = data.filter((item) => item.id !== id);
+                    setData(updatedData);
+                } else {
+                    console.error('Ошибка при удалении группы устройств');
+                }
+            })
+            .catch((error) => {
+                console.error('Ошибка при отправке запроса', error);
+            });
+    };
+
+    // Загружаем данные с API при монтировании компонента
+    useEffect(() => {
+        fetch('http://localhost:9000/api/device-groups')
+            .then((response) => response.json())
+            .then((data) => {
+                // Преобразуем данные для таблицы
+                const formattedData = data.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    count_devices: item.countDevices, // Подстраиваем под формат
+                    status: item.status,
+                }));
+                setData(formattedData);  // Обновляем состояние данными с API
+            })
+            .catch((error) => {
+                console.error('Ошибка загрузки данных:', error);
+            });
+    }, []);  // Зависимость пустая, запрос будет выполнен только при монтировании компонента
+
 
     const columns = [
         {

@@ -9,9 +9,23 @@ export default function Campaigns() {
     const [drawer, setDrawer] = useState(false)
 
     const handleDelete = (id) => {
-        const updatedData = data.filter((item) => item.id !== id)
-        setData(updatedData)
-    }
+        // Отправляем DELETE запрос на сервер
+        fetch(`http://localhost:9000/api/campaigns/${id}`, {
+            method: 'DELETE',
+        })
+            .then((response) => {
+                if (response.ok) {
+                    // Успешно удалена, обновляем данные в таблице
+                    const updatedData = data.filter((item) => item.id !== id);
+                    setData(updatedData);
+                } else {
+                    console.error('Ошибка при удалении кампании');
+                }
+            })
+            .catch((error) => {
+                console.error('Ошибка при отправке запроса', error);
+            });
+    };
 
     // Загружаем данные из API при монтировании компонента
     useEffect(() => {

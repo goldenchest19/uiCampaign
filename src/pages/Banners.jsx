@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Modal, Upload, message } from "antd";
+import { Button, Modal, Form, Input, message } from "antd";
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 
 export default function Banners() {
     const [banners, setBanners] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [form] = Form.useForm();
 
+    // Загружаем баннеры при монтировании компонента
     useEffect(() => {
-        fetch("http://localhost:8080/api/banners")
+        fetch("http://localhost:9000/api/banners")
             .then((response) => response.json())
             .then((data) => setBanners(data))
             .catch(() => message.error("Ошибка при загрузке баннеров"));
     }, []);
 
+    // Функция для удаления баннера
     const deleteBanner = (id) => {
-        fetch(`http://localhost:8080/api/banners/${id}`, {
+        fetch(`http://localhost:9000/api/banners/${id}`, {
             method: "DELETE",
         })
             .then(() => {
@@ -24,44 +27,28 @@ export default function Banners() {
             .catch(() => message.error("Ошибка при удалении баннера"));
     };
 
-    const handleUpload = (file) => {
-        const formData = new FormData();
-        formData.append("file", file);
+    // Функция для добавления баннера
+    const handleAddBanner = (values) => {
+        const { name, imageUrl } = values;
 
-        fetch("http://localhost:8080/api/banners/upload", {
+        // Добавление нового баннера через API
+        const newBanner = { name, urlImage: imageUrl };  // передаем urlImage вместо image
+        fetch("http://localhost:9000/api/banners", {
             method: "POST",
-            body: formData,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newBanner),
         })
             .then((response) => response.json())
-            .then((newBanner) => {
-                setBanners([...banners, newBanner]);
+            .then((newBannerData) => {
+                setBanners([...banners, newBannerData]);
                 setIsModalVisible(false);
                 message.success("Баннер добавлен");
+                form.resetFields();
             })
-            .catch(() => message.error("Ошибка при загрузке баннера"));
+            .catch(() => message.error("Ошибка при добавлении баннера"));
     };
-
-    const columns = [
-        {
-            title: "Изображение",
-            dataIndex: "image",
-            key: "image",
-            render: (image) => <img src={image} alt="banner" style={{ width: 100 }} />,
-        },
-        {
-            title: "Действия",
-            key: "action",
-            render: (_, record) => (
-                <Button
-                    type="danger"
-                    icon={<DeleteOutlined />}
-                    onClick={() => deleteBanner(record.id)}
-                >
-                    Удалить
-                </Button>
-            ),
-        },
-    ];
 
     return (
         <div>
@@ -69,34 +56,78 @@ export default function Banners() {
                 type="primary"
                 icon={<UploadOutlined />}
                 onClick={() => setIsModalVisible(true)}
+                style={{ marginBottom: 20 }}
             >
                 Добавить баннер
             </Button>
 
-            <Table
-                dataSource={banners}
-                columns={columns}
-                rowKey="id"
-                style={{ marginTop: 20 }}
-            />
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
+                {banners.map((banner) => (
+                    <div key={banner.id} style={{ position: "relative", width: 200 }}>
+                        <img
+                            src={banner.urlImage}
+                            alt={banner.name}
+                            style={{ width: "100%", height: 150, objectFit: "cover" }}
+                        />
+                        <div
+                            style={{
+                                position: "absolute",
+                                top: 10,
+                                right: 10,
+                                backgroundColor: "rgba(0,0,0,0.6)",
+                                color: "white",
+                                padding: "5px 10px",
+                                borderRadius: "5px",
+                            }}
+                        >
+                            <Button
+                                type="danger"
+                                icon={<DeleteOutlined />}
+                                onClick={() => deleteBanner(banner.id)}
+                                size="small"
+                            >
+                                Удалить
+                            </Button>
+                        </div>
+                    </div>
+                ))}
+            </div>
 
             <Modal
                 title="Добавить баннер"
                 visible={isModalVisible}
                 onCancel={() => setIsModalVisible(false)}
                 footer={null}
+                destroyOnClose
             >
-                <Upload
-                    customRequest={({ file, onSuccess, onError }) => {
-                        handleUpload(file);
-                        onSuccess();
-                    }}
-                    showUploadList={false}
+                <Form
+                    form={form}
+                    onFinish={handleAddBanner}
+                    layout="vertical"
                 >
-                    <Button icon={<UploadOutlined />}>Выберите файл</Button>
-                </Upload>
+                    <Form.Item
+                        label="Имя баннера"
+                        name="name"
+                        rules={[{ required: true, message: "Введите имя баннера" }]}
+                    >
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Ссылка на картинку"
+                        name="imageUrl"
+                        rules={[{ required: true, message: "Введите ссылку на картинку" }]}
+                    >
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Добавить баннер
+                        </Button>
+                    </Form.Item>
+                </Form>
             </Modal>
         </div>
     );
-};
-
+}
