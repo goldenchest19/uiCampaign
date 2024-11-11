@@ -7,7 +7,6 @@ export default function Banners() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
 
-    // Загружаем баннеры при монтировании компонента
     useEffect(() => {
         fetch("http://localhost:9000/api/banners")
             .then((response) => response.json())
@@ -15,7 +14,6 @@ export default function Banners() {
             .catch(() => message.error("Ошибка при загрузке баннеров"));
     }, []);
 
-    // Функция для удаления баннера
     const deleteBanner = (id) => {
         fetch(`http://localhost:9000/api/banners/${id}`, {
             method: "DELETE",
@@ -27,12 +25,10 @@ export default function Banners() {
             .catch(() => message.error("Ошибка при удалении баннера"));
     };
 
-    // Функция для добавления баннера
     const handleAddBanner = (values) => {
         const { name, imageUrl } = values;
 
-        // Добавление нового баннера через API
-        const newBanner = { name, urlImage: imageUrl };  // передаем urlImage вместо image
+        const newBanner = { name, urlImage: imageUrl };  
         fetch("http://localhost:9000/api/banners", {
             method: "POST",
             headers: {
@@ -63,23 +59,13 @@ export default function Banners() {
 
             <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
                 {banners.map((banner) => (
-                    <div key={banner.id} style={{ position: "relative", width: 200 }}>
+                    <div key={banner.id} style={{ width: 200, textAlign: "center" }}>
                         <img
                             src={banner.urlImage}
                             alt={banner.name}
-                            style={{ width: "100%", height: 150, objectFit: "cover" }}
+                            style={{ width: "100%", height: 150, objectFit: "cover", borderRadius: "8px" }}
                         />
-                        <div
-                            style={{
-                                position: "absolute",
-                                top: 10,
-                                right: 10,
-                                backgroundColor: "rgba(0,0,0,0.6)",
-                                color: "white",
-                                padding: "5px 10px",
-                                borderRadius: "5px",
-                            }}
-                        >
+                        <div style={{ marginTop: 10 }}>
                             <Button
                                 type="danger"
                                 icon={<DeleteOutlined />}

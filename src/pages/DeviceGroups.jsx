@@ -8,13 +8,11 @@ export default function DeviceGroups() {
     const [drawer, setDrawer] = useState(false)
 
     const handleDelete = (id) => {
-        // Отправляем DELETE запрос на сервер
         fetch(`http://localhost:9000/api/device-groups/${id}`, {
             method: 'DELETE',
         })
             .then((response) => {
                 if (response.ok) {
-                    // Успешно удалена, обновляем данные в таблице
                     const updatedData = data.filter((item) => item.id !== id);
                     setData(updatedData);
                 } else {
@@ -26,24 +24,22 @@ export default function DeviceGroups() {
             });
     };
 
-    // Загружаем данные с API при монтировании компонента
     useEffect(() => {
         fetch('http://localhost:9000/api/device-groups')
             .then((response) => response.json())
             .then((data) => {
-                // Преобразуем данные для таблицы
                 const formattedData = data.map(item => ({
                     id: item.id,
                     name: item.name,
-                    count_devices: item.countDevices, // Подстраиваем под формат
+                    count_devices: item.countDevices, 
                     status: item.status,
                 }));
-                setData(formattedData);  // Обновляем состояние данными с API
+                setData(formattedData);  
             })
             .catch((error) => {
                 console.error('Ошибка загрузки данных:', error);
             });
-    }, []);  // Зависимость пустая, запрос будет выполнен только при монтировании компонента
+    }, []);  
 
 
     const columns = [

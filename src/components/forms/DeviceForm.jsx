@@ -8,7 +8,6 @@ export default function DeviceForm({ closeModal }) {
         setDeviceIds(value);
     };
 
-    // Обработчик отправки формы
     const handleSubmit = (values) => {
         const requestData = {
             name: values.name,
@@ -16,10 +15,9 @@ export default function DeviceForm({ closeModal }) {
             status: 'Active', 
             description: values.description,
             city: values.city,
-            devices: deviceIds, // Массив ID устройств
+            devices: deviceIds, 
         };
 
-        // Отправка POST запроса
         fetch('http://localhost:9000/api/device-groups', {
             method: 'POST',
             headers: {
@@ -30,7 +28,7 @@ export default function DeviceForm({ closeModal }) {
             .then((response) => {
                 if (response.ok) {
                     message.success('Группа успешно создана!');
-                    closeModal();  // Закрытие модального окна
+                    closeModal();  
                 } else {
                     message.error('Ошибка при создании группы');
                 }

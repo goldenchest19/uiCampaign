@@ -8,38 +8,34 @@ export default function CampaignForm({ closeModal }) {
     const [banners, setBanners] = useState([]);
 
     useEffect(() => {
-        // Запрос на получение списка устройств
-        fetch('http://localhost:9000/api/device-groups')  // Исправил URL для получения устройств
+        fetch('http://localhost:9000/api/device-groups')  
             .then((response) => response.json())
             .then((data) => {
-                setDevices(data);  // Обновление состояния devices
+                setDevices(data);  
             })
             .catch((error) => message.error('Ошибка загрузки списка устройств'));
 
-        // Запрос на получение списка баннеров
-        fetch('http://localhost:9000/api/banners')  // Исправил URL для получения баннеров
+        fetch('http://localhost:9000/api/banners')  
             .then((response) => response.json())
             .then((data) => {
-                setBanners(data);  // Обновление состояния banners
+                setBanners(data);  
             })
             .catch((error) => message.error('Ошибка загрузки списка баннеров'));
-    }, []);  // Пустой массив зависимостей для выполнения только при монтировании компонента
+    }, []);  
 
     const handleSubmit = (values) => {
-        // Формируем объект с данными из формы
         const campaignData = {
             name: values.name,
             budget: values.budget,
-            countDevices: values.devices.length,  // Количество выбранных устройств
-            status: 'Active',  // Устанавливаем статус как активный по умолчанию
+            countDevices: values.devices.length,  
+            status: 'Active',  
             description: values.description,
             startDate: values.start_date.format('YYYY-MM-DD'),
             endDate: values.end_date.format('YYYY-MM-DD'),
-            deviceId: values.devices,  // Список выбранных устройств
-            bannerId: values.banner,  // ID выбранного баннера
+            deviceId: values.devices,  
+            bannerId: values.banner,  
         };
 
-        // Отправка POST запроса на создание кампании
         fetch('http://localhost:9000/api/campaigns', {
             method: 'POST',
             headers: {
@@ -50,7 +46,7 @@ export default function CampaignForm({ closeModal }) {
             .then((response) => {
                 if (response.ok) {
                     message.success('Кампания успешно создана!');
-                    closeModal();  // Закрытие модального окна
+                    closeModal();  
                 } else {
                     message.error('Ошибка создания кампании');
                 }

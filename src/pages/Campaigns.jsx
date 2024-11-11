@@ -9,13 +9,11 @@ export default function Campaigns() {
     const [drawer, setDrawer] = useState(false)
 
     const handleDelete = (id) => {
-        // Отправляем DELETE запрос на сервер
         fetch(`http://localhost:9000/api/campaigns/${id}`, {
             method: 'DELETE',
         })
             .then((response) => {
                 if (response.ok) {
-                    // Успешно удалена, обновляем данные в таблице
                     const updatedData = data.filter((item) => item.id !== id);
                     setData(updatedData);
                 } else {
@@ -27,14 +25,12 @@ export default function Campaigns() {
             });
     };
 
-    // Загружаем данные из API при монтировании компонента
     useEffect(() => {
-        // Отправляем GET-запрос на сервер
         fetch('http://localhost:9000/api/campaigns')
-            .then((response) => response.json()) // Преобразуем ответ в JSON
-            .then((data) => setData(data)) // Устанавливаем полученные данные в состояние
-            .catch((error) => console.error('Ошибка при получении данных:', error)); // Логируем ошибку в случае неудачи
-    }, []); // useEffect выполнится один раз при монтировании компонента
+            .then((response) => response.json()) 
+            .then((data) => setData(data)) 
+            .catch((error) => console.error('Ошибка при получении данных:', error)); 
+    }, []);
 
     const columns = [
         {
